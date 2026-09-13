@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = 'multibranch-go-app'
-        REPO_URL = "https://github.com/RahmaMohamed205/multibranch-go-app.git"
+        REPO_URL = "https://github.com/RahmaMohamed205/multi-branch.git"
     }
 
     stages {
