@@ -10,7 +10,7 @@ pipeline {
 
         stage('Getting Repo files') {
             steps {
-                git branch: "${GIT_BRANCH}", credentialsId: 'github-creds', url: "${REPO_URL}"
+                git branch: "${env.BRANCH_NAME}", credentialsId: 'github-creds', url: "${REPO_URL}"
             }
         }
 
@@ -51,7 +51,7 @@ pipeline {
                     sh """
                         docker run -d \
                           --name ${APP_NAME}-test \
-                          -e BRANCH_NAME=${GIT_BRANCH} \
+                          -e BRANCH_NAME=${env.BRANCH_NAME} \
                           -p 0:5000 \
                           ${APP_NAME}:${BUILD_NUMBER}
                     """
@@ -79,6 +79,5 @@ pipeline {
                 sh "docker rm -f ${APP_NAME}-test || true"
             }
         }
-    }
     }
 }
