@@ -45,34 +45,34 @@ pipeline {
         }
 
         stage('Run Container') {
-            steps {
-                script {
-                    sh "docker rm -f ${APP_NAME}-test || true"
-                    sh """
-                        docker run -d \
-                          --name ${APP_NAME}-test \
-                          -e BRANCH_NAME=${env.BRANCH_NAME} \
-                          -p 0:5000 \
-                          ${APP_NAME}:${BUILD_NUMBER}
-                    """
-                }
-            }
+    steps {
+        script {
+            sh "docker rm -f ${APP_NAME}-test || true"
+            sh """
+                docker run -d \
+                  --name ${APP_NAME}-test \
+                  -e BRANCH_NAME=${env.BRANCH_NAME} \
+                  ${APP_NAME}:${BUILD_NUMBER}
+            """
         }
+    }
+}
 
         stage('Verify App Is Running') {
-            steps {
-                script {
-                    def hostPort = sh(
-                        script: "docker port ${APP_NAME}-test 5000/tcp | cut -d: -f2",
-                        returnStdout: true
-                    ).trim()
+    steps {
+        script {
+            def containerIp = sh(
+                script: "docker inspect -f '{{.NetworkSettings.IPAddress}}' ${APP_NAME}-test",
+                returnStdout: true
+            ).trim()
 
-                    echo "App running at http://localhost:${hostPort}"
-                    sh "sleep 2"
-                    sh "curl -f http://localhost:${hostPort}/health"
-                }
-            }
+            echo "App running at http://${containerIp}:5000"
+
+            sh "sleep 2"
+            sh "curl -f http://${containerIp}:5000/health"
         }
+    }
+}
 
         stage('Cleanup') {
             steps {
