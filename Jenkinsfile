@@ -66,7 +66,7 @@ pipeline {
                 returnStdout: true
             ).trim()
 
-            echo "App running at http://${containerIp}:5000"
+            echo "App is running at http://${containerIp}:5000"
 
             sh "sleep 2"
             sh "curl -f http://${containerIp}:5000/health"
